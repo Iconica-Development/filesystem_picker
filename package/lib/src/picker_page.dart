@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:filesystem_picker/src/actions/action.dart';
+import 'package:filesystem_picker/src/options/translations.dart';
 import 'package:filesystem_picker/src/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path_lib;
@@ -75,6 +76,7 @@ class FilesystemPicker extends StatefulWidget {
     FilesystemPickerThemeBase? theme,
     List<FilesystemPickerContextAction> contextActions = const [],
     List<FilesystemPickerShortcut> shortcuts = const [],
+    FilePickerTranslations translations = const FilePickerTranslations(),
   }) async {
     return Navigator.of(context).push<String>(
       MaterialPageRoute(builder: (BuildContext context) {
@@ -101,6 +103,7 @@ class FilesystemPicker extends StatefulWidget {
           contextActions: contextActions,
           shortcuts: shortcuts,
           closeButton: const CloseButton(),
+          translations: translations,
         );
       }),
     );
@@ -158,6 +161,7 @@ class FilesystemPicker extends StatefulWidget {
     List<FilesystemPickerContextAction> contextActions = const [],
     List<FilesystemPickerShortcut> shortcuts = const [],
     BoxConstraints? constraints,
+    FilePickerTranslations translations = const FilePickerTranslations(),
   }) async {
     return showDialog<String?>(
       context: context,
@@ -186,6 +190,7 @@ class FilesystemPicker extends StatefulWidget {
           contextActions: contextActions,
           shortcuts: shortcuts,
           closeButton: const CloseButton(),
+          translations: translations,
         ),
       ),
     );
@@ -256,6 +261,7 @@ class FilesystemPicker extends StatefulWidget {
     double? initialChildSize,
     double? minChildSize,
     double? maxChildSize,
+    FilePickerTranslations translations = const FilePickerTranslations(),
   }) async {
     final options = FilesystemPickerDefaultOptions.of(context);
 
@@ -297,6 +303,7 @@ class FilesystemPicker extends StatefulWidget {
           contextActions: contextActions,
           shortcuts: shortcuts,
           closeButton: const CloseButton(),
+          translations: translations,
         ),
       ),
     );
@@ -371,6 +378,9 @@ class FilesystemPicker extends StatefulWidget {
   /// If leading widget is not null, this parameter has no effect.
   final bool automaticallyImplyLeading;
 
+  /// Translations for the file picker.
+  final FilePickerTranslations translations;
+
   /// Creates a file system item selection widget.
   FilesystemPicker({
     Key? key,
@@ -395,6 +405,7 @@ class FilesystemPicker extends StatefulWidget {
     this.shortcuts = const [],
     this.closeButton,
     this.automaticallyImplyLeading = true,
+    this.translations = const FilePickerTranslations(),
   })  : assert(
             (rootDirectory != null || shortcuts.isNotEmpty) &&
                 !(rootDirectory != null && shortcuts.isNotEmpty),
@@ -753,7 +764,8 @@ class FilesystemPickerState extends State<FilesystemPicker> {
     }
   }
 
-  Widget _buildFilesystemListView(FilesystemPickerThemeBase theme) {
+  Widget _buildFilesystemListView(
+      FilesystemPickerThemeBase theme, FilePickerTranslations translations) {
     assert(rootDirectory != null);
     assert(directory != null);
 
@@ -779,6 +791,7 @@ class FilesystemPickerState extends State<FilesystemPicker> {
                 caseSensitiveFileExtensionComparison:
                     caseSensitiveFileExtensionComparison,
                 scrollController: widget.scrollController,
+                translations: translations,
               )
             : Container(
                 alignment: Alignment.center,
@@ -932,7 +945,7 @@ class FilesystemPickerState extends State<FilesystemPicker> {
         break;
 
       case FilesystemPickerViewMode.filesystem:
-        body = _buildFilesystemListView(effectiveTheme);
+        body = _buildFilesystemListView(effectiveTheme, widget.translations);
         break;
     }
 

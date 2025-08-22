@@ -15,3 +15,5 @@ export 'src/filesystem_list.dart';
 export 'src/filesystem_list_tile.dart';
 
 export 'src/shortcuts/shortcut.dart';
+
+export 'src/options/translations.dart';

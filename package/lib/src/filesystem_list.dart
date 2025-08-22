@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'package:filesystem_picker/src/options/translations.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'common.dart';
@@ -60,23 +61,27 @@ class FilesystemList extends StatefulWidget {
   /// the callback should return a boolean value - to display the file/directory or not.
   final FilesystemListFilter? itemFilter;
 
+  /// The translations to use for the file picker.
+  final FilePickerTranslations translations;
+
   /// Creates a list widget that displays a list of folders and files of the file system.
   const FilesystemList({
-    Key? key,
-    this.isRoot = false,
-    required this.rootDirectory,
-    this.fsType = FilesystemType.all,
-    this.folderIconColor,
-    this.allowedExtensions,
     required this.onChange,
     required this.onSelect,
     required this.fileTileSelectMode,
+    required this.rootDirectory,
+    required this.translations,
+    this.isRoot = false,
+    this.fsType = FilesystemType.all,
+    this.folderIconColor,
+    this.allowedExtensions,
     this.theme,
     this.showGoUp = true,
     this.caseSensitiveFileExtensionComparison = false,
     this.scrollController,
     this.itemFilter,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   State<FilesystemList> createState() => _FilesystemListState();
@@ -204,7 +209,9 @@ class _FilesystemListState extends State<FilesystemList> {
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: Center(
-                child: Text('Error loading file list: ${snapshot.error}',
+                child: Text(
+                    widget.translations.loadingErrorMessageBuilder?.call(_rootDirectory) ??
+                        'Error loading file list: ${snapshot.error}',
                     textScaleFactor:
                         effectiveTheme.getTextScaleFactor(context, true)),
               ),
