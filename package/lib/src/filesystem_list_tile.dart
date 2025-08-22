@@ -100,10 +100,18 @@ class FilesystemListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveTheme = theme ?? FilesystemPickerFileListThemeData();
-    final isFile = (fsType == FilesystemType.file) && (item is File);
+    final isFile = (item is File);
     final style = !isFile
         ? effectiveTheme.getFolderTextStyle(context)
         : effectiveTheme.getFileTextStyle(context);
+
+    void onTap() {
+      if (item is Directory) {
+        onChange(item as Directory);
+      } else if (isFile && fileTileSelectMode == FileTileSelectMode.wholeTile) {
+        onSelect(item.absolute.path);
+      }
+    }
 
     return ListTile(
       key: Key(item.absolute.path),
@@ -112,12 +120,7 @@ class FilesystemListTile extends StatelessWidget {
       title: Text(path.basename(item.path),
           style: style,
           textScaleFactor: effectiveTheme.getTextScaleFactor(context, isFile)),
-      onTap: (item is Directory)
-          ? () => onChange(item as Directory)
-          : ((fsType == FilesystemType.file &&
-                  fileTileSelectMode == FileTileSelectMode.wholeTile)
-              ? () => onSelect(item.absolute.path)
-              : null),
+      onTap: onTap,
     );
   }
 }
