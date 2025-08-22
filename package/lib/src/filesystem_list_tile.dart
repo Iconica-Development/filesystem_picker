@@ -61,10 +61,21 @@ class FilesystemListTile extends StatelessWidget {
   }
 
   /// Set the icon for a file
-  Icon _fileIcon(BuildContext context, FilesystemPickerFileListThemeData theme,
-      String filename, bool isFile,
+  Widget _fileIcon(BuildContext context,
+      FilesystemPickerFileListThemeData theme, String filename, bool isFile,
       [Color? color]) {
     final entryExtension = filename.split(".").last;
+    final isImage = _imageFileExtensions.contains(entryExtension);
+
+    if (isImage) {
+      return Image.file(
+        File(filename),
+        fit: BoxFit.contain,
+        width: theme.getIconSize(context),
+        height: theme.getIconSize(context),
+      );
+    }
+
     IconData icon = theme.getFileIcon(
         context, entryExtension, caseSensitiveFileExtensionComparison);
 
@@ -124,3 +135,12 @@ class FilesystemListTile extends StatelessWidget {
     );
   }
 }
+
+final List<String> _imageFileExtensions = [
+  'jpg',
+  'jpeg',
+  'png',
+  'gif',
+  'bmp',
+  'webp',
+];
