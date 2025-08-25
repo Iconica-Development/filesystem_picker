@@ -110,6 +110,10 @@ class _FilesystemListState extends State<FilesystemList> {
     }
   }
 
+  List<String>? get _allowedExtensions => widget.allowedExtensions
+      ?.map((e) => e.startsWith('.') ? e : '.$e')
+      .toList();
+
   void _loadDirContents() async {
     if (!await _rootDirectory.exists()) {
       setState(() {
@@ -118,11 +122,10 @@ class _FilesystemListState extends State<FilesystemList> {
       });
       return;
     }
-
     final List<String>? allowedExtensions =
         widget.caseSensitiveFileExtensionComparison
-            ? widget.allowedExtensions
-            : widget.allowedExtensions
+            ? _allowedExtensions
+            : _allowedExtensions
                 ?.map((e) => e.toLowerCase())
                 .toList(growable: false);
 
@@ -210,7 +213,8 @@ class _FilesystemListState extends State<FilesystemList> {
               padding: const EdgeInsets.all(16.0),
               child: Center(
                 child: Text(
-                    widget.translations.loadingErrorMessageBuilder?.call(_rootDirectory) ??
+                    widget.translations.loadingErrorMessageBuilder
+                            ?.call(_rootDirectory) ??
                         'Error loading file list: ${snapshot.error}',
                     textScaleFactor:
                         effectiveTheme.getTextScaleFactor(context, true)),
